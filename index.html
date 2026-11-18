@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy Birthday ♡</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💖%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&family=Caveat:wght@400..700&family=Nunito:wght@400;600;700;800&family=Homemade+Apple&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- All the words + photos live in content.js — edit that file, not this one. -->
+  <script src="content.js"></script>
+</head>
+<body class="loading">
+
+  <!-- phone block: shown instead of the page on phones -->
+  <div class="gate phone-gate" id="phone-gate" hidden>
+    <div class="gate-card">
+      <div class="gate-emoji" id="phone-emoji">💻</div>
+      <h2 id="phone-title"></h2>
+      <p id="phone-text"></p>
+    </div>
+  </div>
+
+  <!-- lock screen -->
+  <div class="gate lock-gate" id="lock-gate" hidden>
+    <form class="gate-card" id="lock-form" autocomplete="off">
+      <div class="padlock" id="padlock" aria-hidden="true">
+        <span class="shackle"></span><span class="lock-body">♥</span>
+      </div>
+      <h2 id="lock-title"></h2>
+      <label for="lock-input" id="lock-question"></label>
+      <input id="lock-input" type="text" inputmode="text" spellcheck="false" />
+      <button type="submit" class="pill-btn" id="lock-btn"></button>
+      <p class="lock-msg" id="lock-msg" aria-live="polite"></p>
+    </form>
+  </div>
+
+  <!-- first-load screen: waits for every photo + font, then fades away -->
+  <div class="loader" id="loader" role="progressbar" aria-label="Loading" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="loader-inner">
+      <svg class="loader-heart" viewBox="-4 -4 108 100" aria-hidden="true">
+        <defs>
+          <clipPath id="loader-clip"><path d="M50 88 C 22 66, 3 48, 4 27 C 5 11, 18 2, 31 3 C 41 4, 47 10, 50 18 C 53 10, 60 3, 70 3 C 84 3, 96 13, 96 29 C 96 50, 76 67, 50 88 Z"/></clipPath>
+        </defs>
+        <path d="M50 88 C 22 66, 3 48, 4 27 C 5 11, 18 2, 31 3 C 41 4, 47 10, 50 18 C 53 10, 60 3, 70 3 C 84 3, 96 13, 96 29 C 96 50, 76 67, 50 88 Z" fill="#FFE3EC"/>
+        <g clip-path="url(#loader-clip)">
+          <g id="loader-fill" style="transform: translateY(92px)">
+            <path d="M-20 4 Q 0 -4 20 4 T 60 4 T 100 4 T 140 4 V 120 H -20 Z" fill="#FF5C8D" class="loader-wave"/>
+          </g>
+        </g>
+        <path d="M50 88 C 22 66, 3 48, 4 27 C 5 11, 18 2, 31 3 C 41 4, 47 10, 50 18 C 53 10, 60 3, 70 3 C 84 3, 96 13, 96 29 C 96 50, 76 67, 50 88 Z" fill="none" stroke="#4A2B45" stroke-width="3.5" stroke-linejoin="round"/>
+      </svg>
+      <p class="loader-msg" id="loader-msg">wrapping your present…</p>
+      <div class="loader-bar"><span id="loader-bar"></span></div>
+      <p class="loader-pct"><span id="loader-pct">0</span>%</p>
+    </div>
+  </div>
+
+  <!-- shared SVG defs: watercolor filters + heart shape -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <filter id="wc-edge" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="3" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="7" xChannelSelector="R" yChannelSelector="G" result="wobble" />
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="8" result="grain" />
+        <feColorMatrix in="grain" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -0.9 0.75" result="grainA" />
+        <feComposite in="wobble" in2="grainA" operator="in" result="grained" />
+        <feGaussianBlur in="wobble" stdDeviation="0.6" result="soft" />
+        <feMerge><feMergeNode in="soft" /><feMergeNode in="grained" /></feMerge>
+      </filter>
+      <!-- watercolor pigment: pale centre, deeper pooled edges -->
+      <radialGradient id="wc-g1" cx="45%" cy="40%" r="65%">
+        <stop offset="0%" stop-color="#FCD9E3" />
+        <stop offset="55%" stop-color="#F6B3C6" />
+        <stop offset="88%" stop-color="#EE93AE" />
+        <stop offset="100%" stop-color="#E77D9D" />
+      </radialGradient>
+      <radialGradient id="wc-g2" cx="60%" cy="35%" r="70%">
+        <stop offset="0%" stop-color="#FDE3EA" />
+        <stop offset="50%" stop-color="#F8BFD0" />
+        <stop offset="90%" stop-color="#F09AB4" />
+        <stop offset="100%" stop-color="#E9869F" />
+      </radialGradient>
+      <radialGradient id="wc-g3" cx="40%" cy="55%" r="70%">
+        <stop offset="0%" stop-color="#F9C6D5" />
+        <stop offset="60%" stop-color="#F2A2BA" />
+        <stop offset="100%" stop-color="#E06F93" />
+      </radialGradient>
+      <symbol id="heart-path" viewBox="0 0 100 92">
+        <path d="M50 88 C 22 66, 3 48, 4 27 C 5 11, 18 2, 31 3 C 41 4, 47 10, 50 18 C 53 10, 60 3, 70 3 C 84 3, 96 13, 96 29 C 96 50, 76 67, 50 88 Z" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <div id="confetti" aria-hidden="true"></div>
+  <button id="music-btn" class="music-btn" hidden aria-label="Play our song">♪</button>
+  <audio id="music" loop></audio>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="top">
+      <div class="balloons" aria-hidden="true"></div>
+      <div class="rising-hearts" aria-hidden="true"></div>
+
+      <div class="hero-copy">
+        <p class="kicker-pill" data-c="hero.kicker"></p>
+        <h1 class="hero-title">
+          <span class="line1" data-c="hero.titleLine1"></span>
+          <span class="line2"><span class="wobble" data-wobble="hero.titleLine2"></span></span>
+        </h1>
+        <div class="date-stamp"><span data-c="birthdayDate"></span></div>
+        <p class="hero-sub" data-c="hero.subtitle"></p>
+        <a href="#about" class="scroll-cue"><span data-c="hero.scrollCue"></span> <span class="arrow">↓</span></a>
+      </div>
+
+      <div class="hero-stack" id="hero-stack"></div>
+    </section>
+
+    <!-- ============ No.1 ABOUT YOU ============ -->
+    <section class="sec about-sec" id="about">
+      <header class="sec-head reveal">
+        <span class="sec-kicker" data-c="about.kicker"></span>
+        <h2 class="sec-title" data-c="about.title"></h2>
+        <p class="sec-sub" data-c="about.sub"></p>
+      </header>
+
+      <div class="dossier reveal">
+        <div class="dossier-tab">FILE #<span id="file-no"></span></div>
+        <div class="dossier-photo">
+          <span class="paperclip" aria-hidden="true"></span>
+          <img id="about-photo" alt="" />
+        </div>
+        <div class="dossier-body">
+          <dl id="about-fields"></dl>
+          <div class="days-card">
+            <span class="days-num" id="days-num">0</span>
+            <span class="days-label">days together<br/>(and counting)</span>
+          </div>
+          <h3 class="titles-head" data-c="about.titlesHeading"></h3>
+          <ul class="badges" id="about-titles"></ul>
+        </div>
+        <div class="stamp" data-c="about.stamp"></div>
+      </div>
+      <blockquote class="quote reveal"><span data-c="about.quote"></span></blockquote>
+    </section>
+
+    <!-- ============ No.2 SCRAPBOOK ============ -->
+    <section class="sec scrap-sec" id="scrapbook">
+      <header class="sec-head reveal">
+        <span class="sec-kicker" data-c="scrapbook.kicker"></span>
+        <h2 class="sec-title" data-c="scrapbook.title"></h2>
+        <p class="sec-sub" data-c="scrapbook.sub"></p>
+      </header>
+      <div class="scrapbook" id="scrapbook-grid"></div>
+
+      <figure class="favourite reveal" id="favourite">
+        <span class="tape tape-l"></span><span class="tape tape-r"></span>
+        <img alt="" />
+        <figcaption></figcaption>
+        <span class="doodle-heart" aria-hidden="true">♡</span>
+      </figure>
+
+      <!-- photo reels — built from CONTENT.reels -->
+      <div class="reels" id="reels"></div>
+    </section>
+
+    <!-- ============ No.3 CAKE ============ -->
+    <section class="sec cake-sec" id="cake">
+      <header class="sec-head reveal">
+        <span class="sec-kicker" data-c="cake.kicker"></span>
+        <h2 class="sec-title" data-c="cake.title"></h2>
+        <p class="sec-sub" data-c="cake.sub"></p>
+      </header>
+
+      <div class="cake-stage reveal">
+        <figure class="polaroid cake-side" id="cake-side">
+          <span class="tape"></span>
+          <img alt="" />
+          <figcaption></figcaption>
+        </figure>
+
+        <div class="cake-wrap">
+          <div class="candle-count" id="candle-count"></div>
+          <div class="cake" id="cake-el">
+            <div class="candles" id="candles"></div>
+            <div class="tier tier-top"><span class="drip"></span></div>
+            <div class="tier tier-bottom"><span class="drip"></span><div class="sprinkles"></div></div>
+            <div class="plate"></div>
+          </div>
+          <div class="wish" id="wish" hidden>
+            <h3 data-c="cake.wishTitle"></h3>
+            <p data-c="cake.wishText"></p>
+            <button class="pill-btn" id="relight" data-c="cake.relight"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ No.4 STICKY NOTES ============ -->
+    <section class="sec notes-sec" id="notes">
+      <header class="sec-head reveal">
+        <span class="sec-kicker" data-c="notes.kicker"></span>
+        <h2 class="sec-title" data-c="notes.title"></h2>
+        <p class="sec-sub" data-c="notes.sub"></p>
+      </header>
+      <div class="board" id="notes-board"></div>
+    </section>
+
+    <!-- ============ No.5 LETTER on animated watercolor hearts ============ -->
+    <section class="sec letter-sec" id="letter">
+      <div class="wc-hearts" id="wc-hearts" aria-hidden="true"></div>
+
+      <header class="sec-head reveal">
+        <span class="sec-kicker" data-c="letter.kicker"></span>
+        <h2 class="sec-title" data-c="letter.title"></h2>
+        <p class="sec-sub" data-c="letter.sub"></p>
+      </header>
+
+      <div class="envelope-wrap reveal">
+        <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Open the letter">
+          <div class="env-back"></div>
+          <div class="letter-peek" id="letter-peek" role="button" tabindex="-1" aria-label="Read the letter">
+            <p class="peek-greeting"></p>
+            <p class="peek-text"></p>
+            <span class="peek-hint" data-c="letter.readHint"></span>
+          </div>
+          <div class="env-pocket"></div>
+          <div class="env-flap"></div>
+          <button class="seal" tabindex="-1" aria-hidden="true">♥</button>
+          <span class="env-label" data-c="letter.envelopeLabel"></span>
+        </div>
+        <p class="tap-hint" id="tap-hint" data-c="letter.tapHint"></p>
+      </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer">
+      <p class="foot-line"><span data-c="footer.line"></span> <span class="beat">♥</span></p>
+      <div class="foot-stamp"><span data-c="birthdayDate"></span> · <span data-c="footer.edition"></span></div>
+      <a href="#top" class="pill-btn" data-c="footer.backToTop"></a>
+    </footer>
+  </main>
+
+  <!-- full-size letter -->
+  <div class="letter-modal" id="letter-modal" hidden>
+    <div class="letter-paper" role="dialog" aria-modal="true" aria-label="Your letter">
+      <button class="close-x" data-close aria-label="Close">×</button>
+      <p class="l-greeting"></p>
+      <div class="l-body"></div>
+      <p class="l-signoff"></p>
+      <p class="l-name"></p>
+      <p class="l-ps"></p>
+      <span class="l-heart" aria-hidden="true">♥</span>
+    </div>
+  </div>
+
+  <!-- photo lightbox -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="close-x" data-close aria-label="Close">×</button>
+    <div class="lb-inner"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
